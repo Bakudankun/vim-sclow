@@ -6,7 +6,8 @@ function s:init() "{{{
   let g:sclow_block_filetypes = get(g:, 'sclow_block_filetypes', [])
   let g:sclow_block_buftypes  = get(g:, 'sclow_block_buftypes', [])
   let g:sclow_sbar_text         = get(g:, 'sclow_sbar_text', "\<Space>")
-  let g:sclow_sbar_right_offset = get(g:, 'sclow_sbar_right_offset', 0)
+  let g:sclow_sbar_pos        = get(g:, 'sclow_sbar_pos', 'right')
+  let g:sclow_sbar_offset     = get(g:, 'sclow_sbar_offset', 0)
   let g:sclow_sbar_zindex       = get(g:, 'sclow_sbar_zindex', 20)
   let g:sclow_hide_full_length = get(g:, 'sclow_hide_full_length', 0)
   let s:HLGROUP = 'SclowSbar'
@@ -107,7 +108,11 @@ function s:get_basepos() abort "{{{
   if !empty(menu_info('WinBar', 'a'))
     let line += 1
   endif
-  let col += winwidth(0) - g:sclow_sbar_right_offset - 1
+  if g:sclow_sbar_pos ==# 'right'
+    let col += winwidth(0) - g:sclow_sbar_offset - 1
+  elseif g:sclow_sbar_pos ==# 'left'
+    let col += g:sclow_sbar_offset
+  endif
   return [line, col]
 endfunction "}}}
 
