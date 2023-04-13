@@ -5,7 +5,7 @@
 function s:init() "{{{
   let g:sclow_block_filetypes = get(g:, 'sclow_block_filetypes', [])
   let g:sclow_block_buftypes  = get(g:, 'sclow_block_buftypes', [])
-  let g:sclow_sbar_text         = get(g:, 'sclow_sbar_text', "\<Space>")
+  let g:sclow_sbar_text       = get(g:, 'sclow_sbar_text', '┃')
   let g:sclow_sbar_pos        = get(g:, 'sclow_sbar_pos', 'right')
   let g:sclow_sbar_offset     = get(g:, 'sclow_sbar_offset', 0)
   let g:sclow_sbar_zindex       = get(g:, 'sclow_sbar_zindex', 20)
@@ -37,11 +37,17 @@ function sclow#create() abort "{{{
     \ line: line,
     \ col:  col,
     \ zindex: g:sclow_sbar_zindex,
-    \ mask: s:get_masks(winheight, bufheights),
     \ })
 
   " Create scrollbar
-  let s:sbar_id = popup_create([g:sclow_sbar_text]->repeat(winheight), options)
+  let lines = [g:sclow_sbar_text]->repeat(winheight)
+  for mask in s:get_masks(winheight, bufheights)
+    let [_, _, l, el] = mask
+    let l -= l > 0
+    let el -= el > 0
+    let lines[l : el] = ['']->repeat(el - l + 1)
+  endfor
+  let s:sbar_id = popup_create(lines, options)
   let s:savebufheights = bufheights
 endfunction "}}}
 
@@ -97,7 +103,14 @@ endfunction "}}}
 
 
 function s:update_masks(winheight, bufheights) abort "{{{
-  call popup_setoptions(s:sbar_id, #{mask: s:get_masks(a:winheight, a:bufheights)})
+  let lines = [g:sclow_sbar_text]->repeat(a:winheight)
+  for mask in s:get_masks(a:winheight, a:bufheights)
+    let [_, _, l, el] = mask
+    let l -= l > 0
+    let el -= el > 0
+    let lines[l : el] = ['']->repeat(el - l + 1)
+  endfor
+  call popup_settext(s:sbar_id, lines)
 endfunction "}}}
 
 
