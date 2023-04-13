@@ -10,7 +10,7 @@ function s:register_autocmds() abort
   augroup sclow-autocmds
     autocmd!
     autocmd BufEnter,WinEnter * call sclow#create()
-    autocmd CursorMoved,CursorMovedI,CursorHold * call sclow#update()
+    autocmd CursorMoved,CursorMovedI,CursorHold,WinScrolled * call sclow#update()
     autocmd BufLeave,WinLeave * call sclow#delete()
   augroup END
 endfunction
